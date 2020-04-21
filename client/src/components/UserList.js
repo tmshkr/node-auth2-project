@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Button, Table, Spinner } from "reactstrap";
 import axios from "../utils/axios";
 
+import { useLocalStorage } from "../hooks/useLocalStorage";
+
 function UserList(props) {
   const [users, setUsers] = useState([]);
   const { history } = props;
@@ -16,7 +18,10 @@ function UserList(props) {
       });
   }, []);
 
-  const logout = () => axios.post("/api/logout").then(() => history.push("/"));
+  const logout = () => {
+    localStorage.removeItem("token");
+    history.push("/");
+  };
 
   if (!users.length) return <Spinner color="primary" />;
 

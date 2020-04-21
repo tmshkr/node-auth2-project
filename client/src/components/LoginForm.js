@@ -33,7 +33,7 @@ function LoginForm(props) {
           <input
             className="form-control"
             name="username"
-            type="username"
+            type="text"
             id="username"
             ref={register({
               required: "Required",
@@ -58,6 +58,23 @@ function LoginForm(props) {
             {errors.password && errors.password.message}
           </span>
         </FormGroup>
+        {isRegistering && (
+          <FormGroup>
+            <Label for="department">department</Label>
+            <input
+              className="form-control"
+              type="text"
+              name="department"
+              id="department"
+              ref={register({
+                required: "Required",
+              })}
+            />
+            <span className="error">
+              {errors.password && errors.password.message}
+            </span>
+          </FormGroup>
+        )}
 
         {!loading && (
           <>
