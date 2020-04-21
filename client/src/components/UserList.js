@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Button, Table, Spinner } from "reactstrap";
 import axios from "../utils/axios";
 
-import { useLocalStorage } from "../hooks/useLocalStorage";
-
 function UserList(props) {
   const [users, setUsers] = useState([]);
   const { history } = props;
