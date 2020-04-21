@@ -2,11 +2,13 @@ const express = require("express");
 const session = require("express-session");
 const helmet = require("helmet");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 const server = express();
 const KnexSessionStore = require("connect-session-knex")(session);
 
 const router = require("./api");
 const db = require("./db-config");
+const secrets = require("./secrets");
 
 const sessionConfig = {
   name: "reresh-token",
@@ -31,19 +33,22 @@ server.use(helmet());
 server.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 server.use(express.json());
 server.use(session(sessionConfig));
-server.use("/api/users", validateSession);
+server.use("/api/users", validateJWT);
 server.use("/api", router);
 server.use(errorHandler);
 
 module.exports = server;
 
-function validateSession(req, res, next) {
-  console.log(req.sessionID);
-  console.log(req.session);
-  if (!req.session.loggedIn) {
-    return next({ code: 401, message: "You shall not pass!!!" });
+function validateJWT(req, res, next) {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    var decoded = jwt.verify(token, secrets.jwtSecret);
+    console.log(decoded);
+    next();
+  } catch (err) {
+    console.error(err);
+    next({ code: 401, message: "Invalid token" });
   }
-  next();
 }
 
 function errorHandler(err, req, res, next) {
