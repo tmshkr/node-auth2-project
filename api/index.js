@@ -23,7 +23,13 @@ router.post("/register", (req, res) => {
   Users.add({ username, password: hash, department })
     .then(() => {
       req.session.loggedIn = true;
-      res.status(201).send("New user created");
+      const token = generateToken(user);
+      res.json({
+        id: user.id,
+        username: user.username,
+        department: user.department,
+        token,
+      });
     })
     .catch((err) => {
       console.log(err);
