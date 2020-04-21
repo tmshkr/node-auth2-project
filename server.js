@@ -42,8 +42,8 @@ module.exports = server;
 function validateJWT(req, res, next) {
   try {
     const token = req.headers.authorization.split(" ")[1];
-    var decoded = jwt.verify(token, secrets.jwtSecret);
-    console.log(decoded);
+    req.user = jwt.verify(token, secrets.jwtSecret);
+    console.log(req.user);
     next();
   } catch (err) {
     console.error(err);

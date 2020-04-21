@@ -5,7 +5,7 @@ const secrets = require("../secrets");
 const Users = require("./users-model.js");
 
 router.get("/users", (req, res) => {
-  Users.find()
+  Users.findBy({ department: req.user.department })
     .then((users) => {
       res.json(users);
     })
@@ -22,14 +22,7 @@ router.post("/register", (req, res) => {
 
   Users.add({ username, password: hash, department })
     .then(() => {
-      req.session.loggedIn = true;
-      const token = generateToken(user);
-      res.json({
-        id: user.id,
-        username: user.username,
-        department: user.department,
-        token,
-      });
+      res.status(201).send("New user created");
     })
     .catch((err) => {
       console.log(err);
@@ -41,16 +34,11 @@ router.post("/login", (req, res) => {
   const { username, password } = req.body;
 
   Users.findBy({ username })
-    .then((user) => {
+    .then(([user]) => {
       if (user && bcrypt.compareSync(password, user.password)) {
         req.session.loggedIn = true;
         const token = generateToken(user);
-        res.json({
-          id: user.id,
-          username: user.username,
-          department: user.department,
-          token,
-        });
+        res.json({ bearer: token });
       } else res.status(401).send("You shall not pass");
     })
     .catch((err) => {
@@ -74,6 +62,7 @@ function generateToken(user) {
   const payload = {
     userId: user.id,
     username: user.username,
+    department: user.department,
   };
 
   const options = {
