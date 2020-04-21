@@ -19,7 +19,7 @@ function LoginForm(props) {
     axios()
       .post(url, values)
       .then(({ data }) => {
-        setToken(data.bearer);
+        if (data.bearer) setToken(data.bearer);
         history.push("/users");
       })
       .catch((err) => console.dir(err));
