@@ -5,7 +5,11 @@ const secrets = require("../secrets");
 const Users = require("./users-model.js");
 
 router.get("/users", (req, res) => {
-  Users.findBy({ department: req.user.department })
+  Users.findBy({ department: req.user.department }, [
+    "id",
+    "username",
+    "department",
+  ])
     .then((users) => {
       res.json(users);
     })
