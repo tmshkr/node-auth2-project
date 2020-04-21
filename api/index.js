@@ -25,8 +25,10 @@ router.post("/register", (req, res) => {
   const hash = bcrypt.hashSync(password, rounds);
 
   Users.add({ username, password: hash, department })
-    .then(() => {
-      res.status(201).send("New user created");
+    .then((user) => {
+      console.log(user);
+      const token = generateToken(user);
+      res.status(201).json({ bearer: token });
     })
     .catch((err) => {
       console.log(err);
