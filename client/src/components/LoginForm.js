@@ -1,22 +1,25 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, FormGroup, Label, Spinner } from "reactstrap";
+
+import { useLocalStorage } from "../hooks/useLocalStorage";
 import axios from "../utils/axios";
 import "./LoginForm.scss";
 
 function LoginForm(props) {
-  const [loading, setLoading] = useState(false);
   const { history } = props;
+  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useLocalStorage("token", "");
   const { handleSubmit, register, errors, setError } = useForm();
   const isRegistering = history.location.pathname === "/register";
 
   const onSubmit = (values) => {
     setLoading(true);
     const url = isRegistering ? "/api/register" : "/api/login";
-    axios
+    axios()
       .post(url, values)
-      .then((res) => {
-        console.log(res);
+      .then(({ data }) => {
+        setToken(data.bearer);
         history.push("/users");
       })
       .catch((err) => console.dir(err));

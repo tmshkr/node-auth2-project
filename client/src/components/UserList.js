@@ -7,7 +7,7 @@ function UserList(props) {
   const { history } = props;
 
   useEffect(() => {
-    axios
+    axios()
       .get("/api/users")
       .then(({ data }) => setUsers(data))
       .catch((err) => {

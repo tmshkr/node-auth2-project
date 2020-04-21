@@ -4,7 +4,7 @@ export default function () {
   return axios.create({
     baseURL: "http://localhost:5000",
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: token ? `Bearer ${token}` : "",
     },
   });
 }
