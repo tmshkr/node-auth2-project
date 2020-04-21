@@ -14,11 +14,11 @@ router.get("/users", (req, res) => {
 });
 
 router.post("/register", (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, department } = req.body;
   const rounds = process.env.HASH_ROUNDS || 8;
   const hash = bcrypt.hashSync(password, rounds);
 
-  Users.add({ username, password: hash })
+  Users.add({ username, password: hash, department })
     .then(() => {
       req.session.loggedIn = true;
       res.status(201).send("New user created");

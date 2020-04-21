@@ -3,11 +3,13 @@ const session = require("express-session");
 const helmet = require("helmet");
 const cors = require("cors");
 const server = express();
+const KnexSessionStore = require("connect-session-knex")(session);
 
 const router = require("./api");
+const db = require("./db-config");
 
 const sessionConfig = {
-  name: "project-session",
+  name: "reresh-token",
   secret: process.env.SESSION_SECRET || "secret",
   resave: false,
   saveUninitialized: process.env.SEND_COOKIES || true,
@@ -16,6 +18,13 @@ const sessionConfig = {
     secure: process.env.USE_SECURE_COOKIES || false, // used over https only
     httpOnly: true, // javascript on client can't access cookie
   },
+  store: new KnexSessionStore({
+    knex: db,
+    tablename: "sessions",
+    sidfieldname: "sid",
+    createtable: true,
+    clearInterval: 1000 * 60 * 60, // will remove expired sessions every hour
+  }),
 };
 
 server.use(helmet());
